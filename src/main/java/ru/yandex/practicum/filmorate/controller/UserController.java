@@ -9,19 +9,18 @@ import ru.yandex.practicum.filmorate.model.User;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
     private final Map<Integer, User> users = new HashMap<>();
+    private int id = 0;
     private final Logger log = LoggerFactory.getLogger(UserController.class);
 
     @GetMapping
     public List<User> findAll() {
+        log.debug("Storage size users is {}", users.size());
         return new ArrayList<>(users.values());
     }
 
@@ -31,20 +30,25 @@ public class UserController {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
+        if (user.getId() == 0) {
+            user.setId(generateID());
+        }
         users.put(user.getId(), user);
         log.info("Add new user {}", user);
-
         return user;
     }
 
     @PutMapping
     public User update(@Valid @RequestBody User user) {
         check(user);
+        if (!users.containsKey(user.getId())) {
+            throw new ValidateException("user not found");
+        }
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
         users.put(user.getId(), user);
-        log.info("Add new user {}", user);
+        log.info("Update film {}", user);
         return user;
     }
 
@@ -61,6 +65,9 @@ public class UserController {
             log.debug("Incorrect birthday {}", user.getBirthday());
             throw new ValidateException("Не корректно заполнено поле birthday");
         }
+    }
 
+    private int generateID() {
+        return ++this.id;
     }
 }
