@@ -53,11 +53,11 @@ public class UserController {
     }
 
     private void check(User user) {
-        if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
+        if (user.getEmail().isBlank() || !user.getEmail().contains("@")) {
             log.debug("Incorrect email {}", user.getEmail());
             throw new ValidateException("Не корректно заполнено поле email");
         }
-        if (user.getLogin() == null || user.getLogin().isBlank() || user.getLogin().contains(" ")) {
+        if (user.getLogin().isBlank() || user.getLogin().contains(" ")) {
             log.debug("Incorrect login {}", user.getLogin());
             throw new ValidateException("Не корректно заполнено поле login");
         }

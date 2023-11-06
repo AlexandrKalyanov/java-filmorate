@@ -20,9 +20,12 @@ public class FilmController {
     private final Map<Integer, Film> films = new HashMap<>();
     private int id = 0;
     private final Logger log = LoggerFactory.getLogger(FilmController.class);
+    private static final int MAX_DESCR_VALUE_SIZE = 200;
+    private static final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
 
     @GetMapping
     public List<Film> findAll() {
+
         log.debug("Storage size films is {}", films.size());
         return new ArrayList<>(films.values());
     }
@@ -50,15 +53,15 @@ public class FilmController {
     }
 
     private void check(Film film) {
-        if (film.getName() == null || film.getName().isBlank()) {
+        if (film.getName().isBlank()) {
             log.debug("Film name is empty. Film {}", film);
             throw new ValidateException("Не заполнено наименование фильма");
         }
-        if (film.getDescription().length() > 200) {
+        if (film.getDescription().length() > MAX_DESCR_VALUE_SIZE) {
             log.debug("Film name is empty");
             throw new ValidateException("Максимальное кол-во символов в описании превысило 200 символов");
         }
-        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+        if (film.getReleaseDate().isBefore(MIN_RELEASE_DATE)) {
             log.debug("Release date is before 28.12.1985. Film date: {}", film.getReleaseDate());
             throw new ValidateException("Дата релиза должна быть не раньще не раньше 28 декабря 1895 года");
         }
