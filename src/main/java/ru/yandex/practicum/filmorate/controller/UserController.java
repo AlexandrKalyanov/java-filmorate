@@ -1,73 +1,83 @@
 package ru.yandex.practicum.filmorate.controller;
 
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exceptions.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidateException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
 import java.util.*;
 
 @RestController
 @RequestMapping("/users")
+@RequiredArgsConstructor
 public class UserController {
-    private final Map<Integer, User> users = new HashMap<>();
-    private int id = 0;
-    private final Logger log = LoggerFactory.getLogger(UserController.class);
+
+    private final UserService userService;
 
     @GetMapping
-    public List<User> findAll() {
-        log.debug("Storage size users is {}", users.size());
-        return new ArrayList<>(users.values());
+    public Collection<User> findAll() {
+        return userService.getAll();
+    }
+
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable int id) {
+        return userService.getById(id);
     }
 
     @PostMapping
     public User create(@Valid @RequestBody User user) {
-        check(user);
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
-        if (user.getId() == 0) {
-            user.setId(generateID());
-        }
-        users.put(user.getId(), user);
-        log.info("Add new user {}", user);
-        return user;
+        return userService.create(user);
     }
 
     @PutMapping
     public User update(@Valid @RequestBody User user) {
-        check(user);
-        if (!users.containsKey(user.getId())) {
-            throw new ValidateException("user not found");
-        }
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
-        users.put(user.getId(), user);
-        log.info("Update film {}", user);
-        return user;
+        return userService.update(user);
     }
 
-    private void check(User user) {
-        if (user.getEmail().isBlank() || !user.getEmail().contains("@")) {
-            log.debug("Incorrect email {}", user.getEmail());
-            throw new ValidateException("Не корректно заполнено поле email");
-        }
-        if (user.getLogin().isBlank() || user.getLogin().contains(" ")) {
-            log.debug("Incorrect login {}", user.getLogin());
-            throw new ValidateException("Не корректно заполнено поле login");
-        }
-        if (user.getBirthday().isAfter(LocalDate.now())) {
-            log.debug("Incorrect birthday {}", user.getBirthday());
-            throw new ValidateException("Не корректно заполнено поле birthday");
-        }
+
+    @PutMapping("/{id}/friends/{friendId}")
+    public User addFriend(@PathVariable int id, @PathVariable int friendId) {
+        return userService.addFriend(id, friendId);
     }
 
-    private int generateID() {
-        return ++this.id;
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public User deleteFriend(@PathVariable int id, @PathVariable int friendId) {
+        return userService.deleteFriend(id, friendId);
+    }
+
+    @GetMapping("/{id}/friends")
+    @ResponseBody
+    public Optional<Collection<User>> getListFriends(@PathVariable int id) {
+        return userService.getListFriends(id);
+    }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    @ResponseBody
+    public Optional<Collection<User>> getListCommonFriends(@PathVariable int id, @PathVariable int otherId) {
+        return userService.getListCommonFriends(id, otherId);
+    }
+
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public Map<String, String> handleGeneral(final RuntimeException e) {
+        return Map.of("ERROR", e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleValidateException(final ValidateException e) {
+        return Map.of("ERROR", e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String, String> handleObjectNotFoundException(final ObjectNotFoundException e) {
+        return Map.of("ERROR", e.getMessage());
     }
 }
