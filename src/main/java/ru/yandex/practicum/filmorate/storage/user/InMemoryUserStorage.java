@@ -2,17 +2,20 @@ package ru.yandex.practicum.filmorate.storage.user;
 
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
+
 import java.util.*;
 
 @Component
-public class InMemoryUserStorage implements UserStorage{
+public class InMemoryUserStorage implements UserStorage {
 
 
     private final Map<Integer, User> users = new HashMap<>();
+
     @Override
     public void addUser(User user) {
-        users.put(user.getId(),user);
+        users.put(user.getId(), user);
     }
+
     @Override
     public void deleteUser(int id) {
         users.remove(id);
@@ -30,9 +33,10 @@ public class InMemoryUserStorage implements UserStorage{
 
     @Override
     public void updateUser(User user) {
-        users.put(user.getId(),user);
+        users.put(user.getId(), user);
     }
-    public Map<Integer,User> getUsers() {
+
+    public Map<Integer, User> getUsers() {
         return users;
     }
 

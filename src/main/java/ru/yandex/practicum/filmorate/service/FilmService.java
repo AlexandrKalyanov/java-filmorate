@@ -64,7 +64,7 @@ public class FilmService {
         if (!inMemoryFilmStorage.getFilms().containsKey(id)) {
             throw new ObjectNotFoundException("film not found");
         }
-        return inMemoryFilmStorage.addLike(id,userId);
+        return inMemoryFilmStorage.addLike(id, userId);
 
     }
 
@@ -76,7 +76,7 @@ public class FilmService {
             throw new ObjectNotFoundException("incorrect userId");
         }
 
-        return inMemoryFilmStorage.deleteLike(id,userID);
+        return inMemoryFilmStorage.deleteLike(id, userID);
     }
 
     public Collection<Film> topFilmsWithCount(Optional<Integer> count) {

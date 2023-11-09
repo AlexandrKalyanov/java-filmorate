@@ -10,8 +10,10 @@ public interface UserStorage {
 
     void deleteUser(int id);
 
-    void updateUser (User film);
+    void updateUser(User film);
+
     Collection<User> getAllUsers();
+
     User getUserById(int id);
 
 }
