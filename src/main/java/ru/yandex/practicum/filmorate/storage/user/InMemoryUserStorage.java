@@ -36,8 +36,14 @@ public class InMemoryUserStorage implements UserStorage {
         users.put(user.getId(), user);
     }
 
-    public Map<Integer, User> getUsers() {
-        return users;
+    @Override
+    public Collection<User> getUsers() {
+        return users.values();
+    }
+
+    @Override
+    public boolean existById(int id) {
+        return users.containsKey(id);
     }
 
 }

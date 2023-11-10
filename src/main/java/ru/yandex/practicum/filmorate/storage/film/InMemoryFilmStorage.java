@@ -51,7 +51,13 @@ public class InMemoryFilmStorage implements FilmStorage {
         films.put(film.getId(), film);
     }
 
-    public Map<Integer, Film> getFilms() {
-        return films;
+    @Override
+    public Collection<Film> getFilms() {
+        return films.values();
+    }
+
+    @Override
+    public boolean existById(int id) {
+        return films.containsKey(id);
     }
 }

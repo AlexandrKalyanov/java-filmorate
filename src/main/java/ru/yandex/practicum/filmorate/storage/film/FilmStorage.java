@@ -20,4 +20,7 @@ public interface FilmStorage {
 
     Film deleteLike(int filmId, int userId);
 
+    Collection<Film> getFilms();
+
+    boolean existById(int id);
 }

@@ -16,4 +16,7 @@ public interface UserStorage {
 
     User getUserById(int id);
 
+    Collection<User> getUsers();
+
+    boolean existById(int id);
 }

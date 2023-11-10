@@ -1,22 +1,22 @@
 package ru.yandex.practicum.filmorate.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidateException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class UserService {
-    private final InMemoryUserStorage inMemoryUserStorage;
-    private final Logger log = LoggerFactory.getLogger(UserService.class);
+    private final UserStorage inMemoryUserStorage;
     private int id = 0;
 
     @Autowired
@@ -31,7 +31,7 @@ public class UserService {
     }
 
     public User getById(int id) {
-        if (!inMemoryUserStorage.getUsers().containsKey(id)) {
+        if (!inMemoryUserStorage.existById(id)) {
             throw new ObjectNotFoundException("User not found");
 
         }
@@ -53,7 +53,7 @@ public class UserService {
 
     public User update(User user) {
         check(user);
-        if (!inMemoryUserStorage.getUsers().containsKey(user.getId())) {
+        if (!inMemoryUserStorage.existById(user.getId())) {
             throw new ObjectNotFoundException("User not found");
         }
         if (user.getName() == null || user.getName().isBlank()) {
@@ -64,35 +64,35 @@ public class UserService {
         return user;
     }
 
-    public Optional<Collection<User>> getListCommonFriends(int id, int otherId) {
-        if (inMemoryUserStorage.getUsers().get(id).getFriends().isEmpty() || inMemoryUserStorage.getUsers().get(otherId).getFriends().isEmpty()) {
-            return Optional.of(new ArrayList<>());
+    public Collection<User> getListCommonFriends(int id, int otherId) {
+        if (inMemoryUserStorage.getUserById(id).getFriends().isEmpty() || inMemoryUserStorage.getUserById(otherId).getFriends().isEmpty()) {
+            return Collections.emptyList();
         }
-        Set<Integer> listFriendsId = inMemoryUserStorage.getUsers().get(id).getFriends();
-        Set<Integer> otherFriendsId = inMemoryUserStorage.getUsers().get(otherId).getFriends();
+        Set<Integer> listFriendsId = inMemoryUserStorage.getUserById(id).getFriends();
+        Set<Integer> otherFriendsId = inMemoryUserStorage.getUserById(otherId).getFriends();
         List<Integer> duplicates = new ArrayList<>();
         for (Integer i : listFriendsId) {
             if (otherFriendsId.contains(i)) {
                 duplicates.add(i);
             }
         }
-        return Optional.of(inMemoryUserStorage.getUsers().values().stream()
+        return inMemoryUserStorage.getUsers().stream()
                 .filter(user -> duplicates.contains(user.getId()))
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList());
     }
 
-    public Optional<Collection<User>> getListFriends(int id) {
+    public Collection<User> getListFriends(int id) {
         if (inMemoryUserStorage.getUserById(id).getFriends().isEmpty()) {
-            return Optional.of(new ArrayList<>());
+            return Collections.emptyList();
         }
         Set<Integer> listFriendsId = inMemoryUserStorage.getUserById(id).getFriends();
-        return Optional.of(inMemoryUserStorage.getAllUsers().stream()
+        return inMemoryUserStorage.getAllUsers().stream()
                 .filter(user -> listFriendsId.contains(user.getId()))
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList());
     }
 
     public User addFriend(int id, int friendId) {
-        if (!inMemoryUserStorage.getUsers().containsKey(id) || !inMemoryUserStorage.getUsers().containsKey(friendId)) {
+        if (!inMemoryUserStorage.existById(id) || !inMemoryUserStorage.existById(friendId)) {
             throw new ObjectNotFoundException("user not found");
         }
         User user = inMemoryUserStorage.getUserById(id);
@@ -102,7 +102,7 @@ public class UserService {
     }
 
     public User deleteFriend(int id, int friendId) {
-        User user = inMemoryUserStorage.getUsers().get(id);
+        User user = inMemoryUserStorage.getUserById(id);
         user.getFriends().remove(friendId);
         return user;
     }

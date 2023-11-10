@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
@@ -24,5 +25,6 @@ public class User {
     @NotNull
     private LocalDate birthday;
     @Setter(AccessLevel.NONE)
+    @JsonIgnore
     private Set<Integer> friends = new HashSet<>();
 }

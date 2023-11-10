@@ -1,10 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exceptions.ObjectNotFoundException;
-import ru.yandex.practicum.filmorate.exceptions.ValidateException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
@@ -51,28 +48,8 @@ public class FilmController {
     }
 
     @GetMapping("/popular")
-    public Collection<Film> topFilms(@RequestParam Optional<Integer> count) {
+    public Collection<Film> topFilms(@RequestParam(defaultValue = "10") int count) {
         return filmService.topFilmsWithCount(count);
     }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public Map<String, String> handleGeneral(final RuntimeException e) {
-        return Map.of("not found", e.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleValidateException(final ValidateException e) {
-        return Map.of("Validation error", e.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, String> handleObjectNotFoundException(final ObjectNotFoundException e) {
-        return Map.of("not found", e.getMessage());
-    }
-
-
 }
 
