@@ -20,7 +20,7 @@ public class FilmService {
     private static final int MAX_DESCR_VALUE_SIZE = 200;
     private static final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
     private int id = 0;
-    private final Comparator<Film> FILM_LIKE_COMPARATOR = (film1, film2) -> {
+    private final Comparator<Film> filmComparator = (film1, film2) -> {
         if (film1.getLikes().size() == film2.getLikes().size()) {
             return (film1.getId() - film2.getId());
         } else {
@@ -84,7 +84,7 @@ public class FilmService {
     }
 
     public Collection<Film> topFilmsWithCount(int count) {
-        Set<Film> popularFilms = new TreeSet<>(FILM_LIKE_COMPARATOR.reversed());
+        Set<Film> popularFilms = new TreeSet<>(filmComparator.reversed());
         Collection<Film> films = inMemoryFilmStorage.getAllFilms();
         popularFilms.addAll(films);
         return popularFilms.stream().limit(count).collect(Collectors.toSet());
