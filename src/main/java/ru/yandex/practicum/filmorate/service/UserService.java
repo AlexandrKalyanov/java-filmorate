@@ -25,7 +25,7 @@ public class UserService {
     }
 
     public Collection<User> getAll() {
-        Collection<User> users = inMemoryUserStorage.getAllUsers();
+        Collection<User> users = inMemoryUserStorage.getUsers();
         log.debug("Storage size users is {}", users.size());
         return users;
     }
@@ -86,7 +86,7 @@ public class UserService {
             return Collections.emptyList();
         }
         Set<Integer> listFriendsId = inMemoryUserStorage.getUserById(id).getFriends();
-        return inMemoryUserStorage.getAllUsers().stream()
+        return inMemoryUserStorage.getUsers().stream()
                 .filter(user -> listFriendsId.contains(user.getId()))
                 .collect(Collectors.toList());
     }
@@ -102,9 +102,7 @@ public class UserService {
     }
 
     public User deleteFriend(int id, int friendId) {
-        User user = inMemoryUserStorage.getUserById(id);
-        user.getFriends().remove(friendId);
-        return user;
+      return inMemoryUserStorage.deleateFriend(id,friendId);
     }
 
     private void check(User user) {

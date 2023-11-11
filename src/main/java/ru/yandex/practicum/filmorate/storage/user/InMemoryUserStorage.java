@@ -22,11 +22,6 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public Collection<User> getAllUsers() {
-        return users.values();
-    }
-
-    @Override
     public User getUserById(int id) {
         return users.get(id);
     }
@@ -46,4 +41,12 @@ public class InMemoryUserStorage implements UserStorage {
         return users.containsKey(id);
     }
 
+    @Override
+    public User deleateFriend(int id, int friendId) {
+        User user = users.get(id);
+        user.getFriends().remove(friendId);
+        User userFriend = users.get(friendId);
+        userFriend.getFriends().remove(id);
+        return user;
+    }
 }

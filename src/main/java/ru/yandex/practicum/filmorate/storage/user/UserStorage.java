@@ -12,11 +12,13 @@ public interface UserStorage {
 
     void updateUser(User film);
 
-    Collection<User> getAllUsers();
-
     User getUserById(int id);
 
     Collection<User> getUsers();
 
     boolean existById(int id);
+
+    User deleateFriend(int id, int friendId);
+
+
 }
