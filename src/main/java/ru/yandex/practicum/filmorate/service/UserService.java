@@ -60,7 +60,7 @@ public class UserService {
             user.setName(user.getLogin());
         }
         inMemoryUserStorage.updateUser(user);
-        log.info("Update film {}", user);
+        log.info("Update user {}", user);
         return user;
     }
 
