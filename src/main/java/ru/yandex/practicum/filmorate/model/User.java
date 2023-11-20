@@ -2,9 +2,7 @@ package ru.yandex.practicum.filmorate.model;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -14,6 +12,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
     private int id;
     @Email
@@ -24,7 +24,6 @@ public class User {
     private String name;
     @NotNull
     private LocalDate birthday;
-    @Setter(AccessLevel.NONE)
-    @JsonIgnore
-    private Set<Integer> friends = new HashSet<>();
+
+
 }

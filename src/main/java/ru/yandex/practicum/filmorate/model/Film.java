@@ -23,6 +23,11 @@ public class Film {
     @NotNull
     private int duration;
     @JsonIgnore
+    @Deprecated
     private Set<Integer> likes = new HashSet<>();
+    @NotNull
+    private Mpa mpa;
+
+    private Set<Genre> genres = new HashSet<>();
 
 }
