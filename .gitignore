@@ -23,6 +23,7 @@ mvnw.cmd
 .settings
 .springBeans
 .sts4-cache
+db
 
 ### IntelliJ IDEA ###
 .idea
