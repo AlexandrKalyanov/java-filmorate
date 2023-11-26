@@ -7,10 +7,10 @@ import lombok.*;
 @AllArgsConstructor
 public class Friendship {
     @NonNull
-    private Long fromUserId;
+    private int fromUserId;
 
     @NonNull
-    private Long toUserId;
+    private int toUserId;
 
     @NonNull
     private Boolean isMutual;

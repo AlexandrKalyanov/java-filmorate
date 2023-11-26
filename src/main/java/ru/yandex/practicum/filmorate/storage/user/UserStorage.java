@@ -21,4 +21,9 @@ public interface UserStorage {
     User deleateFriend(int id, int friendId);
 
 
+    Collection<User> getMutualFriends(int id, int otherId);
+
+    User addFriend(int id, int friendId);
+
+    Collection<User> getFriendsByUserId(int id);
 }
