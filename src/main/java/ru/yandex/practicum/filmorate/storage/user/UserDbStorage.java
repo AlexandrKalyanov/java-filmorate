@@ -6,9 +6,10 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exceptions.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.mapper.UserMapper;
 
 import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -26,7 +27,7 @@ public class UserDbStorage implements UserStorage {
                 user.getLogin(),
                 user.getName(),
                 Date.valueOf(user.getBirthday()));
-        return template.queryForObject("SELECT USER_ID, EMAIL, LOGIN, NAME, BIRTHDAY FROM users WHERE email= ?", new UserMapper(), user.getEmail());
+        return template.queryForObject("SELECT USER_ID, EMAIL, LOGIN, NAME, BIRTHDAY FROM users WHERE email= ?", this::mapRowUser, user.getEmail());
     }
 
     @Override
@@ -46,17 +47,17 @@ public class UserDbStorage implements UserStorage {
                 user.getName(),
                 Date.valueOf(user.getBirthday()),
                 user.getId());
-        return template.queryForObject("SELECT USER_ID, EMAIL, LOGIN, NAME, BIRTHDAY FROM users WHERE USER_ID = ?", new UserMapper(), user.getId());
+        return template.queryForObject("SELECT USER_ID, EMAIL, LOGIN, NAME, BIRTHDAY FROM users WHERE USER_ID = ?", this::mapRowUser, user.getId());
     }
 
     @Override
     public User getUserById(int id) {
-        return template.queryForObject("SELECT USER_ID, NAME, LOGIN, BIRTHDAY, EMAIL FROM users WHERE USER_ID = ?", new UserMapper(), id);
+        return template.queryForObject("SELECT USER_ID, NAME, LOGIN, BIRTHDAY, EMAIL FROM users WHERE USER_ID = ?", this::mapRowUser, id);
     }
 
     @Override
     public Collection<User> getUsers() {
-        return template.query("SELECT * FROM USERS", new UserMapper());
+        return template.query("SELECT * FROM USERS", this::mapRowUser);
     }
 
     @Override
@@ -74,7 +75,7 @@ public class UserDbStorage implements UserStorage {
     public Collection<User> getMutualFriends(int id, int otherId) {
         return new ArrayList<>(template.query("SELECT * FROM USERS WHERE USER_ID IN(" +
                 "SELECT FROM_USER_ID FROM FRIENDSHIPS WHERE TO_USER_ID = ? && ISMUTUAL = 'true') " +
-                "AND USER_ID IN(SELECT TO_USER_ID FROM FRIENDSHIPS WHERE USER_ID = ? && ISMUTUAL = 'true')", new UserMapper(), id, otherId));
+                "AND USER_ID IN(SELECT TO_USER_ID FROM FRIENDSHIPS WHERE USER_ID = ? && ISMUTUAL = 'true')", this::mapRowUser, id, otherId));
     }
 
     @Override
@@ -106,7 +107,17 @@ public class UserDbStorage implements UserStorage {
     public Collection<User> getFriendsByUserId(int id) {
         String sqlQuery = "SELECT user_id, email, login, name, birthday FROM users WHERE user_id IN" +
                 "(SELECT TO_USER_ID FROM FRIENDSHIPS WHERE FROM_USER_ID=?)";
-        return new ArrayList<>(template.query(sqlQuery, new UserMapper(), id)) {
+        return new ArrayList<>(template.query(sqlQuery, this::mapRowUser, id)) {
         };
+    }
+
+    public User mapRowUser(ResultSet rs, int rowNum) throws SQLException {
+        User user = new User();
+        user.setId(rs.getInt("user_id"));
+        user.setEmail(rs.getString("email"));
+        user.setLogin(rs.getString("login"));
+        user.setName(rs.getString("name"));
+        user.setBirthday(rs.getDate("birthday").toLocalDate());
+        return user;
     }
 }

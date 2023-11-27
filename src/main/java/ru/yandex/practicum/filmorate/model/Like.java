@@ -2,13 +2,14 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
+
+import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor
 public class Like {
-    @NonNull
+    @NotNull
     private Long filmID;
-    @NonNull
+    @NotNull
     private Long userID;
 }

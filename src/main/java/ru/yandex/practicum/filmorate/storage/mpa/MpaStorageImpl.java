@@ -5,8 +5,9 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.mapper.MpaMapper;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Collection;
 
 
@@ -17,11 +18,11 @@ public class MpaStorageImpl implements MpaStorage {
 
 
     public Collection<Mpa> getAll() {
-        return template.query("SELECT MPA_RATING_ID,NAME FROM MPA_RATINGS ORDER BY MPA_RATING_ID", new MpaMapper());
+        return template.query("SELECT MPA_RATING_ID,NAME FROM MPA_RATINGS ORDER BY MPA_RATING_ID", this::mapRowMpa);
     }
 
     public Mpa getMpaById(int id) {
-        return template.queryForObject("SELECT mpa_rating_id, name FROM mpa_ratings WHERE mpa_rating_id=?", new MpaMapper(), id);
+        return template.queryForObject("SELECT mpa_rating_id, name FROM mpa_ratings WHERE mpa_rating_id=?", this::mapRowMpa, id);
     }
 
     public boolean contains(int id) {
@@ -31,5 +32,12 @@ public class MpaStorageImpl implements MpaStorage {
         } catch (EmptyResultDataAccessException ex) {
             return false;
         }
+    }
+
+    public Mpa mapRowMpa(ResultSet rs, int rowNum) throws SQLException {
+        Mpa mpa = new Mpa();
+        mpa.setId(rs.getInt("mpa_rating_id"));
+        mpa.setName(rs.getString("name"));
+        return mpa;
     }
 }

@@ -4,8 +4,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Friendship;
-import ru.yandex.practicum.filmorate.mapper.FriendshipMapper;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -43,7 +44,7 @@ public class FriendShipDbStorage implements FriendShipStorage {
     public Collection<Integer> getFromUserIDs(int toUserId) {
         return template.query("SELECT FROM_USER_ID, TO_USER_ID, ISMUTUAL" +
                         " FROM FRIENDSHIPS " +
-                        "WHERE TO_USER_ID=?", new FriendshipMapper(), toUserId)
+                        "WHERE TO_USER_ID=?", this::mapRowFriendship, toUserId)
                 .stream()
                 .map(Friendship::getFromUserId)
                 .collect(Collectors.toList());
@@ -65,7 +66,15 @@ public class FriendShipDbStorage implements FriendShipStorage {
         return template.queryForObject("SELECT from_user_id, to_user_id, isMutual " +
                         "FROM friendships " +
                         "WHERE from_user_id=? AND to_user_id=?",
-                new FriendshipMapper(),
+                this::mapRowFriendship,
                 fromUserID, toUserID);
+    }
+
+    private Friendship mapRowFriendship(ResultSet rs, int rowNum) throws SQLException {
+        Friendship friendship = new Friendship();
+        friendship.setFromUserId(rs.getInt("from_user_id"));
+        friendship.setToUserId(rs.getInt("to_user_id"));
+        friendship.setIsMutual(rs.getBoolean("isMutual"));
+        return friendship;
     }
 }

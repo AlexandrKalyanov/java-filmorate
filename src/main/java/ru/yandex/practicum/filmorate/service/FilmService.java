@@ -7,14 +7,16 @@ import ru.yandex.practicum.filmorate.exceptions.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidateException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.genre.GenreStorage;
 import ru.yandex.practicum.filmorate.storage.like.LikeSrorage;
 import ru.yandex.practicum.filmorate.storage.mpa.MpaStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Collection;
+import java.util.Objects;
+
 
 @Service
 public class FilmService {
@@ -53,9 +55,6 @@ public class FilmService {
     }
 
     public Film get(int filmID) {
-        if (!filmStorage.contains(filmID)) {
-            throw new ObjectNotFoundException("Film not found");
-        }
         Film film = filmStorage.get(filmID);
         film.setGenres(filmStorage.getGenres(filmID));
         film.setMpa(mpaStorage.getMpaById(film.getMpa().getId()));
@@ -72,15 +71,16 @@ public class FilmService {
     }
 
     public Collection<Film> getPopularFilms(int count) {
-        Collection<Film> films = filmStorage.getAll();
+        Collection<Mpa> mpa = mpaStorage.getAll();
+        Collection<Film> films = filmStorage.getRating(count);
         for (Film film : films) {
-            film.setGenres(filmStorage.getGenres(film.getId()));
-            film.setMpa(mpaStorage.getMpaById(film.getMpa().getId()));
+            for (Mpa mpa1 : mpa) {
+                if (Objects.equals(film.getMpa().getId(), mpa1.getId())) {
+                    film.setMpa(mpa1);
+                }
+            }
         }
-        return films.stream()
-                .sorted(this::likeCompare)
-                .limit(count)
-                .collect(Collectors.toList());
+        return films;
     }
 
     public void addLike(int filmID, int userID) {

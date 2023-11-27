@@ -16,6 +16,8 @@ public interface FilmStorage {
 
     Collection<Film> getAll();
 
+    Collection<Film> getRating(int count);
+
     boolean contains(int id);
 
     void addGenres(int id, Set<Genre> genres);
