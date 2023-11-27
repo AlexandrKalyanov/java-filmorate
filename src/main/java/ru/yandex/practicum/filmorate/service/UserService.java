@@ -35,7 +35,7 @@ public class UserService {
     }
 
     public User getById(int id) {
-        if (!userStorage.existById(id)) {
+        if (!userStorage.contains(id)) {
             throw new ObjectNotFoundException("User not found");
 
         }
@@ -53,7 +53,7 @@ public class UserService {
 
     public User update(User user) {
         check(user);
-        if (!userStorage.existById(user.getId())) {
+        if (!userStorage.contains(user.getId())) {
             throw new ObjectNotFoundException("User not found");
         }
         if (user.getName() == null || user.getName().isBlank()) {
@@ -80,7 +80,7 @@ public class UserService {
 
 
     public Collection<User> getListFriends(int id) {
-        if (!userStorage.existById(id)) {
+        if (!userStorage.contains(id)) {
             throw new ObjectNotFoundException("User not found");
         }
         return friendShipDbStorage.getFromUserIDs(id).stream()
@@ -116,10 +116,10 @@ public class UserService {
     }
 
     private void checkFriendToAdd(int userID, int friendID) {
-        if (!userStorage.existById(userID)) {
+        if (!userStorage.contains(userID)) {
             throw new ObjectNotFoundException("User not found");
         }
-        if (!userStorage.existById(friendID)) {
+        if (!userStorage.contains(friendID)) {
             throw new ObjectNotFoundException("User not found");
         }
         if (userID == friendID) {
@@ -131,10 +131,10 @@ public class UserService {
     }
 
     private void checkFriendToDelete(int userID, int friendID) {
-        if (!userStorage.existById(userID)) {
+        if (!userStorage.contains(userID)) {
             throw new ObjectNotFoundException("User not found");
         }
-        if (!userStorage.existById(friendID)) {
+        if (!userStorage.contains(friendID)) {
             throw new ObjectNotFoundException("User not found");
         }
         if (userID == friendID) {
@@ -146,10 +146,10 @@ public class UserService {
     }
 
     private void checkCommonFriend(int id, int otherId) {
-        if (!userStorage.existById(id)) {
+        if (!userStorage.contains(id)) {
             throw new ObjectNotFoundException("User not found");
         }
-        if (!userStorage.existById(otherId)) {
+        if (!userStorage.contains(otherId)) {
             throw new ObjectNotFoundException("User not found");
         }
         if (id == otherId) {

@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
@@ -15,7 +14,6 @@ import java.util.Collection;
 
 
 @Repository
-@Slf4j
 @AllArgsConstructor
 public class UserDbStorage implements UserStorage {
     private final JdbcTemplate template;
@@ -62,13 +60,13 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public boolean existById(int id) {
+    public boolean contains(int id) {
         SqlRowSet userRows = template.queryForRowSet("SELECT * FROM USERS WHERE USER_ID = ?", id);
         return userRows.next();
     }
 
     @Override
-    public User deleateFriend(int id, int friendId) {
+    public User deleteFriend(int id, int friendId) {
         return null;
     }
 

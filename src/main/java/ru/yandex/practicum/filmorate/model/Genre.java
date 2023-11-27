@@ -11,7 +11,6 @@ import lombok.NonNull;
 public class Genre {
     @NonNull
     private Integer id;
-
     @NonNull
     private String name;
 }

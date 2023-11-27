@@ -16,7 +16,7 @@ public class MpaService {
     private final MpaStorage mpaStorage;
 
     public Mpa get(int mpaID) {
-        if (!mpaStorage.existById(mpaID)) {
+        if (!mpaStorage.contains(mpaID)) {
             log.warn("Не удалось вернуть рейтинг MPA.");
             throw new ObjectNotFoundException("MPA not found");
         }

@@ -7,7 +7,6 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 
 
 import javax.validation.Valid;
-import java.util.*;
 
 @RestController
 @RequestMapping("/films")
@@ -17,39 +16,39 @@ public class FilmController {
     private final FilmService filmService;
 
 
+    @PostMapping
+    public Film addFilm(@Valid @RequestBody Film film) {
+        return filmService.add(film);
+    }
+
+    @PutMapping
+    public Film updateFilm(@Valid @RequestBody Film film) {
+        return filmService.update(film);
+    }
+
     @GetMapping
-    public Collection<Film> findAll() {
+    public Iterable<Film> getFilms() {
         return filmService.getAll();
     }
 
     @GetMapping("/{id}")
-    public Film getFilmById(@PathVariable int id) {
-        return filmService.getFilmById(id);
-    }
-
-    @PostMapping
-    public Film create(@Valid @RequestBody Film film) {
-        return filmService.create(film);
-    }
-
-    @PutMapping
-    public Film update(@Valid @RequestBody Film film) {
-        return filmService.update(film);
-    }
-
-    @PutMapping("/{id}/like/{userId}")
-    public Film userAddLike(@PathVariable int id, @PathVariable int userId) {
-        return filmService.addLike(id, userId);
-    }
-
-    @DeleteMapping("/{id}/like/{userId}")
-    public Film userDeleteLike(@PathVariable int id, @PathVariable int userId) {
-        return filmService.deleteLike(id, userId);
+    public Film getFilm(@PathVariable int id) {
+        return filmService.get(id);
     }
 
     @GetMapping("/popular")
-    public Collection<Film> topFilms(@RequestParam(defaultValue = "10") int count) {
-        return filmService.topFilmsWithCount(count);
+    public Iterable<Film> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
+        return filmService.getPopularFilms(count);
+    }
+
+    @PutMapping("/{id}/like/{userId}")
+    public void addLike(@PathVariable int id, @PathVariable int userId) {
+        filmService.addLike(id, userId);
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    public void deleteLike(@PathVariable int id, @PathVariable int userId) {
+        filmService.deleteLike(id, userId);
     }
 }
 

@@ -23,7 +23,6 @@ public class GenreService {
         return genreStorage.get(genreID);
     }
 
-
     public Collection<Genre> getAll() {
         return genreStorage.getAll();
     }

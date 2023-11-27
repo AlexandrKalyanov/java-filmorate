@@ -7,6 +7,8 @@ import java.util.Collection;
 public interface MpaStorage {
 
     Collection<Mpa> getAll();
+
     Mpa getMpaById(int id);
-    boolean existById(int id);
+
+    boolean contains(int id);
 }

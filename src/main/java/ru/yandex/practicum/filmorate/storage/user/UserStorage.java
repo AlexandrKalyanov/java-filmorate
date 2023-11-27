@@ -16,9 +16,9 @@ public interface UserStorage {
 
     Collection<User> getUsers();
 
-    boolean existById(int id);
+    boolean contains(int id);
 
-    User deleateFriend(int id, int friendId);
+    User deleteFriend(int id, int friendId);
 
 
     Collection<User> getMutualFriends(int id, int otherId);

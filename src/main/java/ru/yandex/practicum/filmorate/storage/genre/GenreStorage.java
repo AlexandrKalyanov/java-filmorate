@@ -6,6 +6,8 @@ import java.util.Collection;
 
 public interface GenreStorage {
     Genre get(int genreID);
+
     Collection<Genre> getAll();
+
     boolean contains(int genreID);
 }

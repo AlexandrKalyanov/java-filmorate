@@ -8,10 +8,8 @@ import lombok.*;
 public class Friendship {
     @NonNull
     private int fromUserId;
-
     @NonNull
     private int toUserId;
-
     @NonNull
     private Boolean isMutual;
 }

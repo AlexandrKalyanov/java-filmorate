@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.friendship;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Friendship;
@@ -13,7 +12,6 @@ import java.util.stream.Collectors;
 
 
 @Repository
-@Slf4j
 @AllArgsConstructor
 public class FriendShipDbStorage implements FriendShipStorage {
 
@@ -24,8 +22,6 @@ public class FriendShipDbStorage implements FriendShipStorage {
     public void add(int fromUserID, int toUserID, boolean isMutual) {
         template.update("INSERT INTO FRIENDSHIPS (FROM_USER_ID, TO_USER_ID, ISMUTUAL) "
                 + "VALUES(?, ?, ?)", fromUserID, toUserID, isMutual);
-        Friendship result = get(fromUserID, toUserID);
-        log.trace("Добавлена связь: {}.", result);
     }
 
 
