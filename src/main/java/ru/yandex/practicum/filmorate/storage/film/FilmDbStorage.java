@@ -19,7 +19,8 @@ import java.util.Set;
 @Repository
 @AllArgsConstructor
 public class FilmDbStorage implements FilmStorage {
-    JdbcTemplate template;
+
+    private final JdbcTemplate template;
 
     @Override
     public Film add(Film film) {
