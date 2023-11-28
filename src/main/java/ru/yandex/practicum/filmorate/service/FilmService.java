@@ -7,7 +7,6 @@ import ru.yandex.practicum.filmorate.exceptions.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidateException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.genre.GenreStorage;
 import ru.yandex.practicum.filmorate.storage.like.LikeSrorage;
@@ -15,7 +14,6 @@ import ru.yandex.practicum.filmorate.storage.mpa.MpaStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Collection;
-import java.util.Objects;
 
 
 @Service
@@ -62,25 +60,11 @@ public class FilmService {
     }
 
     public Collection<Film> getAll() {
-        Collection<Film> films = filmStorage.getAll();
-        for (Film film : films) {
-            film.setGenres(filmStorage.getGenres(film.getId()));
-            film.setMpa(mpaStorage.getMpaById(film.getMpa().getId()));
-        }
-        return films;
+        return filmStorage.getAll();
     }
 
     public Collection<Film> getPopularFilms(int count) {
-        Collection<Mpa> mpa = mpaStorage.getAll();
-        Collection<Film> films = filmStorage.getRating(count);
-        for (Film film : films) {
-            for (Mpa mpa1 : mpa) {
-                if (Objects.equals(film.getMpa().getId(), mpa1.getId())) {
-                    film.setMpa(mpa1);
-                }
-            }
-        }
-        return films;
+        return filmStorage.getRating(count);
     }
 
     public void addLike(int filmID, int userID) {
@@ -91,10 +75,6 @@ public class FilmService {
     public void deleteLike(int filmID, int userID) {
         checkLikeToDelete(filmID, userID);
         likeSrorage.delete(filmID, userID);
-    }
-
-    private int likeCompare(Film film, Film otherFilm) {
-        return Integer.compare(likeSrorage.count(otherFilm.getId()), likeSrorage.count(film.getId()));
     }
 
     private void checkFilmToAdd(Film film) {

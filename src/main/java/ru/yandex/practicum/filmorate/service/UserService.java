@@ -80,13 +80,7 @@ public class UserService {
 
 
     public Collection<User> getListFriends(int id) {
-        if (!userStorage.contains(id)) {
-            throw new ObjectNotFoundException("User not found");
-        }
-        return friendShipDbStorage.getFromUserIDs(id).stream()
-                .mapToInt(Integer::valueOf)
-                .mapToObj(userStorage::getUserById)
-                .collect(Collectors.toList());
+        return userStorage.getFriendsByUser(id);
     }
 
     public void addFriend(int id, int friendId) {

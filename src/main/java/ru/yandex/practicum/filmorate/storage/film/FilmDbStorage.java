@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exceptions.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.Mpa;
+import ru.yandex.practicum.filmorate.storage.mpa.MpaStorage;
 
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -21,6 +21,7 @@ import java.util.Set;
 public class FilmDbStorage implements FilmStorage {
 
     private final JdbcTemplate template;
+    private final MpaStorage mpaStorage;
 
     @Override
     public Film add(Film film) {
@@ -124,15 +125,14 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private Film mapRowFilm(ResultSet rs, int rowNum) throws SQLException {
-        Mpa mpa = new Mpa();
-        mpa.setId(rs.getInt("mpa_rating_id"));
         Film film = new Film();
         film.setId(rs.getInt("film_id"));
         film.setName(rs.getString("name"));
         film.setDescription(rs.getString("description"));
         film.setReleaseDate(rs.getDate("release_date").toLocalDate());
         film.setDuration(rs.getInt("duration_in_minutes"));
-        film.setMpa(mpa);
+        film.setMpa(mpaStorage.getMpaById(rs.getInt("mpa_rating_id")));
+        film.setGenres(getGenres(film.getId()));
         return film;
     }
 
