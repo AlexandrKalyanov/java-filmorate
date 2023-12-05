@@ -94,7 +94,7 @@ public class UserService {
     public User addFriend(int id, int friendId) {
         if (!inMemoryUserStorage.existById(id) || !inMemoryUserStorage.existById(friendId)) {
             //коммент
-            throw new ObjectNotFoundException("user not found12321");
+            throw new ObjectNotFoundException("user not found12131334");
         }
         User user = inMemoryUserStorage.getUserById(id);
         inMemoryUserStorage.getUserById(friendId).getFriends().add(id);
